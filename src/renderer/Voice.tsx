@@ -109,9 +109,22 @@ function calculateVoiceAudio(
 		pan.positionX.setValueAtTime(panPos[0], audioContext.currentTime);
 		pan.positionY.setValueAtTime(panPos[1], audioContext.currentTime);
 		return;
+	} else if(me.isDead && other.isImpostor) {
+		/* Impostor can talk with his ghosts = macbeth mode */
+		gain.gain.value = 1;
+		pan.positionX.setValueAtTime(panPos[0], audioContext.currentTime);
+		pan.positionY.setValueAtTime(panPos[1], audioContext.currentTime);
+		return;
 	}
 	if (!me.isDead && other.isDead) {
 		gain.gain.value = 0;
+		return;
+	}
+	if(me.isImpostor && other.isDead) {
+		/* Impostor can talk with his ghosts = macbeth mode */
+		gain.gain.value = 1;
+		pan.positionX.setValueAtTime(panPos[0], audioContext.currentTime);
+		pan.positionY.setValueAtTime(panPos[1], audioContext.currentTime);
 		return;
 	}
 	if (
