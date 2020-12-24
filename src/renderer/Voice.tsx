@@ -57,11 +57,18 @@ function calculateVoiceAudio(state: AmongUsState, settings: ISettings, me: Playe
 	if (isNaN(panPos[1])) panPos[1] = 999;
 	panPos[0] = Math.min(999, Math.max(-999, panPos[0]));
 	panPos[1] = Math.min(999, Math.max(-999, panPos[1]));
-	if (other.inVent) {
+	/* Not required to allow the impostor to talk with the others */
+	/* if (other.inVent) {
 		gain.gain.value = 0;
 		return;
-	}
+	} */
 	if (me.isDead && other.isDead) {
+		gain.gain.value = 1;
+		pan.positionX.setValueAtTime(panPos[0], audioContext.currentTime);
+		pan.positionY.setValueAtTime(panPos[1], audioContext.currentTime);
+		return;
+	} else if(me.isDead && other.isImpostor) {
+		/* Impostor can talk with his ghosts = macbeth mode */
 		gain.gain.value = 1;
 		pan.positionX.setValueAtTime(panPos[0], audioContext.currentTime);
 		pan.positionY.setValueAtTime(panPos[1], audioContext.currentTime);
@@ -69,6 +76,13 @@ function calculateVoiceAudio(state: AmongUsState, settings: ISettings, me: Playe
 	}
 	if (!me.isDead && other.isDead) {
 		gain.gain.value = 0;
+		return;
+	}
+	if(me.isImpostor && other.isDead) {
+		/* Impostor can talk with his ghosts = macbeth mode */
+		gain.gain.value = 1;
+		pan.positionX.setValueAtTime(panPos[0], audioContext.currentTime);
+		pan.positionY.setValueAtTime(panPos[1], audioContext.currentTime);
 		return;
 	}
 	if (state.gameState === GameState.LOBBY || state.gameState === GameState.DISCUSSION) {
